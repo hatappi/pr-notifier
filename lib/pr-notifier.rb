@@ -5,7 +5,7 @@ require "slack-notifier"
 
 module PrNotifier
   module_function
-  def run(gh_token: nil, repos: nil, webhook_url: nil, channel: nil, username: nil, template: nil)
+  def run(gh_token: nil, repos: nil, webhook_url: nil, channel: nil, username: nil, template: nil, dry_run: false)
     gh_token ||= ENV['GH_TOKEN']
     repos = (repos || ENV['GH_REPOS'])&.split(',')
     webhook_url ||= ENV["SLACK_WEBHOOK_URL"]
@@ -20,8 +20,13 @@ module PrNotifier
     gh_client = Github.new(access_token: gh_token)
     prs = repos.each_with_object([]) { |repo, prs| prs.concat(gh_client.fetch_prs_by(repo)) }
 
-    notifier = Slack::Notifier.new(webhook_url, channel: channel, username: username)
-    notifier.ping(message(pull_requests: prs))
+    send_message = message(pull_requests: prs)
+    if dry_run
+      puts send_message
+    else
+      notifier = Slack::Notifier.new(webhook_url, channel: channel, username: username)
+      notifier.ping(message(pull_requests: prs))
+    end
   end
 
   def message(pull_requests:) 

@@ -4,6 +4,9 @@ require "pr-notifier"
 require "optparse"
 
 OptionParser.new do |opts|
+  opts.on('-d', '--dry-run', 'DRY RUN') do |v|
+    @dry_run = v
+  end
   opts.on('-g', '--gh-token VALUE', 'GitHub access token ENV:GH_TOKEN') do |v|
     @gh_token = v
   end
@@ -31,4 +34,5 @@ PrNotifier.run(
   channel: @channel,
   username: @username,
   template: @template,
+  dry_run: @dry_run,
 )
