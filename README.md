@@ -14,30 +14,71 @@ gem 'pr-notifier'
 
 And then execute:
 
-    $ bundle
+```bash
+$ bundle
+```
 
 Or install it yourself as:
 
-    $ gem install pr-notifier
+```bash
+$ gem install pr-notifier
+```
 
 ## Usage
 
-TODO: Write usage instructions here
+```bash
+$ pr-notifier -g [GITHUB_TOKEN] -r hatappi/pr-notifier -w https://hooks.slack.com/services/xxxx/yyyy
+```
 
-## Development
+## CommandLine options
 
-After checking out the repo, run `bin/setup` to install dependencies. Then, run `rake spec` to run the tests. You can also run `bin/console` for an interactive prompt that will allow you to experiment.
+```bash
+-d, --dry-run                    DRY RUN
+-g, --gh-token VALUE             GitHub access token ENV:GH_TOKEN
+-r, --repos VALUE                GitHub repositories. separate comma ENV:GH_REPOS
+-w, --webhook-url VALUE          slack webhook url ENV:SLACK_WEBHOOK_URL
+-c, --channel VALUE              slack channel ENV:SLACK_CHANNEL
+-u, --username VALUE             slack username ENV:SLACK_USERNAME
+-t, --template VALUE             ERB template for sending to slack ENV:TEMPLATE
+```
 
-To install this gem onto your local machine, run `bundle exec rake install`. To release a new version, update the version number in `version.rb`, and then run `bundle exec rake release`, which will create a git tag for the version, push git commits and tags, and push the `.gem` file to [rubygems.org](https://rubygems.org).
+## Writing a template
+pr-notifier' slack template can be changed and use [ERB](https://docs.ruby-lang.org/ja/latest/class/ERB.html).  
+`pull_requests` variables can be used for templates.  
+`pull_requests` is an array of instances with the following properties.  
+
+```
+- repo: repository name
+- repo_url: repository_url
+- url: pull request url
+- title: pull request title
+- body: pull request description
+- reviewers: reviewer names
+- assignees: assignee names
+- creator: pull request creator name
+- created_at: day pull request was created
+```
+
+exp.  
+
+```erb
+<%= Time.now %>
+<% pull_requests.each do |pr| -%>
+  <%= pr.title %>
+  <%= pr.body %>
+<% end -%>
+```
 
 ## Contributing
 
-Bug reports and pull requests are welcome on GitHub at https://github.com/[USERNAME]/pr-notifier. This project is intended to be a safe, welcoming space for collaboration, and contributors are expected to adhere to the [Contributor Covenant](http://contributor-covenant.org) code of conduct.
+If there is any thing you'd like to contribute or fix, please:
+
+- Fork the repo
+- Add tests for any new functionality
+- Make your changes
+- Make a pull request
+
 
 ## License
 
 The gem is available as open source under the terms of the [MIT License](https://opensource.org/licenses/MIT).
-
-## Code of Conduct
-
-Everyone interacting in the Pr::Notifier project’s codebases, issue trackers, chat rooms and mailing lists is expected to follow the [code of conduct](https://github.com/[USERNAME]/pr-notifier/blob/master/CODE_OF_CONDUCT.md).
