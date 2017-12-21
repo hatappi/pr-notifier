@@ -1,0 +1,34 @@
+#!/usr/bin/env ruby
+
+require "pr-notifier"
+require "optparse"
+
+OptionParser.new do |opts|
+  opts.on('-g', '--gh-token VALUE', 'GitHub access token ENV:GH_TOKEN') do |v|
+    @gh_token = v
+  end
+  opts.on('-r', '--repos VALUE', 'GitHub repositories. separate comma ENV:GH_REPOS') do |v|
+    @repos = v
+  end
+  opts.on('-w', '--webhook-url VALUE', 'slack webhook url ENV:SLACK_WEBHOOK_URL') do |v|
+    @webhook_url = v
+  end
+  opts.on('-c', '--channel VALUE', 'slack channel ENV:SLACK_CHANNEL') do |v|
+    @channel = v
+  end
+  opts.on('-u', '--username VALUE', 'slack username ENV:SLACK_USERNAME') do |v|
+    @username = v
+  end
+  opts.on('-t', '--template VALUE', 'ERB template for sending to slack ENV:TEMPLATE') do |v|
+    @template = v
+  end
+end.parse!
+
+PrNotifier.run(
+  gh_token: @gh_token,
+  repos: @repos,
+  webhook_url: @webhook_url,
+  channel: @channel,
+  username: @username,
+  template: @template,
+)
