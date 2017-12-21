@@ -13,6 +13,10 @@ module PrNotifier
     username ||= ENV["SLACK_USERNAME"]
     @template = template || ENV["TEMPLATE"]
 
+    raise "Please set GitHub Token" if gh_token.nil?
+    raise "Please set repos" if repos.size == 0
+    raise "Please set slack webhook_url" if webhook_url.nil?
+
     gh_client = Github.new(access_token: gh_token)
     prs = repos.each_with_object([]) { |repo, prs| prs.concat(gh_client.fetch_prs_by(repo)) }
 
